@@ -24,7 +24,7 @@ STATE_TEMPERATURE_DISPLAY_MODE = "temperature_display_mode"
 STATE_PI_COOLING_DEMAND = "pi_cooling_demand"
 STATE_TEMPERATURE = "temperature"
 
-KEYPAD_LOCKOUTS = ["unlocked", "lock", "lock1"]
+KEYPAD_LOCKOUTS = ["unlocked", "lock1"]
 RUNNING_STATES = ["idle", "heat", "cool"]
 SCHNEIDER_PILOT_MODES = ["contactor", "pilot"]
 SYSTEM_MODES = ["off", "heat", "cool"]

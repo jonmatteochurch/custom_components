@@ -69,13 +69,6 @@ class S520619PICoolingDemandSensor(_BaseSensor):
     @property
     def native_value(self):
         return self._state.pi_cooling_demand
-    
-    def set_native_value(self, value):
-        try:
-            self._state.pi_cooling_demand = int(value)
-            self._state.notify()
-        except ValueError:
-            pass
 
 
 class S520619PIHeatingDemandSensor(_BaseSensor):

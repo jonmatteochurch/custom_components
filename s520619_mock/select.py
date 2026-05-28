@@ -41,7 +41,7 @@ class _BaseSelect(S520619Entity, SelectEntity):
 
 
 class S520619TemperatureDisplayModeSelect(_BaseSelect):
-    _attr_name = "Temperature Display Mode"
+    _attr_name = "Temperature display mode"
     _attr_options = TEMPERATURE_DISPLAY_MODES
 
     def __init__(self, entry, state):

@@ -6,5 +6,7 @@ class S520619Entity:
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self._entry.entry_id)},
-            name=self._entry.title
+            name=self._entry.title,
+            model="Schneider Electric S520619 (mock setpoint)",
+            manufacturer="Jon Matteo Church"
         )

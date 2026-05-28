@@ -1,6 +1,6 @@
 {
   "domain": "s520619_mock",
-  "name": "Schneider Electric S520619 (Mock Setpoint)",
+  "name": "S520619 (Mock Setpoint)",
   "version": "1.0.0",
   "documentation": "https://www.zigbee2mqtt.io/devices/S520619.html",
   "requirements": [],

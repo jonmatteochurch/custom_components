@@ -39,7 +39,7 @@ class _BaseSwitch(S520619Entity, SwitchEntity):
 
 
 class S520619KeypadLockoutSwitch(_BaseSwitch):
-    _attr_name = "Keypad Lockout"
+    _attr_name = "Keypad lockout"
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "keypad_lockout")

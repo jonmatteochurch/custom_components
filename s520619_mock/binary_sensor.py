@@ -22,7 +22,7 @@ class _BaseBinarySensor(S520619Entity, BinarySensorEntity):
     def __init__(self, entry, state, key):
         self._entry = entry
         self._state = state
-        self._attr_unique_id = f"{entry.unique_id}_{key}"
+        self._attr_unique_id = f"{entry.entry_id}_{key}"
 
     async def async_added_to_hass(self):
         self._state.listeners.append(self._async_refresh)

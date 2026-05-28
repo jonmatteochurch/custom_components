@@ -6,7 +6,13 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 
-PLATFORMS = [Platform.CLIMATE, Platform.SENSOR, Platform.SELECT, Platform.BINARY_SENSOR]
+PLATFORMS = [
+    Platform.CLIMATE, 
+    Platform.SWITCH,
+    Platform.SELECT,
+    Platform.BINARY_SENSOR,
+    Platform.SENSOR, 
+]
 
 
 @dataclass
