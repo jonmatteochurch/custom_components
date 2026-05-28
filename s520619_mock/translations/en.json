@@ -1,0 +1,37 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "S520619 Mock — Setup",
+                "description": "Setup this S520619 mock device.",
+                "data": {
+                    "name": "Device name"
+                }
+            }
+        },
+        "error": {
+            "invalid_name": "Name must not be empty."
+        },
+        "abort": {
+            "already_configured": "Already configured."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "{name} — Options",
+                "description": "Configure this S520619 mock device.",
+                "data": {
+                    "measurement_poll_interval": "Measurement poll interval",
+                    "temperature_calibration": "Temperature calibration",
+                    "temperature_precision": "Temperature precision",
+                    "thermostat_unit": "Thermostat unit",
+                    "no_occupancy_since": "No occupancy since"
+                }
+            }
+        },
+        "error": {
+            "invalid_no_occupancy_since": "Must be a comma-separated list of integers."
+        }
+    }
+}
