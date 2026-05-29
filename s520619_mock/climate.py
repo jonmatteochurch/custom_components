@@ -104,12 +104,14 @@ class S520619Climate(S520619Entity, ClimateEntity):
 
     async def async_set_temperature(self, **kwargs) -> None:
         if (temp := kwargs.get(ATTR_TARGET_TEMP_HIGH)) is not None:
-            self._state.occupied_heating_setpoint = temp
-        elif (temp := kwargs.get(ATTR_TARGET_TEMP_LOW)) is not None:
             self._state.occupied_cooling_setpoint = temp
+        if (temp := kwargs.get(ATTR_TARGET_TEMP_LOW)) is not None:
+            self._state.occupied_heating_setpoint = temp
+        self._state.update()
         self._state.notify()
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         self._state.system_mode = HVAC_MODE_MAP.get(hvac_mode)
+        self._state.update()
         self._state.notify()
 

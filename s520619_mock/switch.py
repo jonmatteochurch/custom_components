@@ -48,11 +48,17 @@ class S520619KeypadLockoutSwitch(_BaseSwitch):
     def is_on(self):
         return self._state.keypad_lockout == "lock1"
     
-    def turn_on(self):
+    @property
+    def icon(self) -> str:
+        if self.is_on:
+            return "mdi:lock"
+        return "mdi:lock-open-variant"
+    
+    async def async_turn_on(self):
         self._state.keypad_lockout = "lock1"
         self._state.notify()
 
-    def turn_off(self):
+    async def async_turn_off(self):
         self._state.keypad_lockout = "unlock"
         self._state.notify()
 

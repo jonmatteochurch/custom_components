@@ -3,6 +3,7 @@ from __future__ import annotations
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import S520619State
@@ -43,6 +44,7 @@ class _BaseSelect(S520619Entity, SelectEntity):
 class S520619TemperatureDisplayModeSelect(_BaseSelect):
     _attr_name = "Temperature display mode"
     _attr_options = TEMPERATURE_DISPLAY_MODES
+    _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "display_mode")
@@ -51,7 +53,13 @@ class S520619TemperatureDisplayModeSelect(_BaseSelect):
     def current_option(self):
         return self._state.temperature_display_mode
 
-    def select_option(self, option: str) -> None:
+    @property
+    def icon(self) -> str:
+        if self.current_option == "fahrenheit":
+            return "mdi:temperature-fahrenheit"
+        return "mdi:temperature-celsius"
+
+    async def async_select_option(self, option: str) -> None:
         self._state.temperature_display_mode = option
         self._state.notify()
 
@@ -59,6 +67,7 @@ class S520619TemperatureDisplayModeSelect(_BaseSelect):
 class S520619SchneiderPilotModeSelect(_BaseSelect):
     _attr_name = "Schneider pilot mode"
     _attr_options = SCHNEIDER_PILOT_MODES
+    _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "pilot_mode")
@@ -67,7 +76,7 @@ class S520619SchneiderPilotModeSelect(_BaseSelect):
     def current_option(self):
         return self._state.schneider_pilot_mode
 
-    def select_option(self, option: str) -> None:
+    async def async_select_option(self, option: str) -> None:
         self._state.schneider_pilot_mode = option
         self._state.notify()
 

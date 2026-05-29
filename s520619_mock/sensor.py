@@ -4,6 +4,7 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE, UnitOfTemperature
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import S520619State
 from .const import DOMAIN
@@ -17,6 +18,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         S520619PICoolingDemandSensor(entry, state),
         S520619PIHeatingDemandSensor(entry, state),
         S520619TemperatureSensor(entry, state),
+        S520619DisplaySensor(entry, state),
     ])
 
 
@@ -55,9 +57,20 @@ class S520619LinkqualitySensor(_BaseSensor):
     def native_value(self):
         return self._state.linkquality
 
+    @property
+    def icon(self) -> str:
+        if self.native_value < 64:
+            return "mdi:signal-cellular-outline"
+        if self.native_value < 128:
+            return "mdi:signal-cellular-1"
+        if self.native_value < 192:
+            return "mdi:signal-cellular-2"
+        return "mdi:signal-cellular-3"
+
 
 class S520619PICoolingDemandSensor(_BaseSensor):
     _attr_name = "PI cooling demand"
+    _attr_icon = "mdi:air-conditioner"
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_native_min_value = 0
     _attr_native_max_value = 100
@@ -73,6 +86,7 @@ class S520619PICoolingDemandSensor(_BaseSensor):
 
 class S520619PIHeatingDemandSensor(_BaseSensor):
     _attr_name = "PI heating demand"
+    _attr_icon = "mdi:radiator"
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_native_min_value = 0
     _attr_native_max_value = 100
@@ -92,7 +106,41 @@ class S520619TemperatureSensor(_BaseSensor):
     def __init__(self, entry, state):
         super().__init__(entry, state, "temperature")
         self._attr_native_unit_of_measurement = self._entry.options.get("thermostat_unit", UnitOfTemperature.CELSIUS) 
+        self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get("thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
 
     @property
     def native_value(self):
         return self._state.temperature
+
+
+class S520619DisplaySensor(_BaseSensor):
+    _attr_name = "Display"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, entry, state):
+        super().__init__(entry, state, "display")
+
+    @property
+    def icon(self) -> str:
+        too_cold = self._state.system_mode == "heat" and self._state.local_temperature < self._state.occupied_heating_setpoint
+        too_hot = self._state.system_mode == "cool" and self._state.local_temperature > self._state.occupied_cooling_setpoint
+        if too_cold:
+            return "mdi:radiator"
+        if too_hot:
+            return "mdi:snowflake"
+        return "mdi:blank"
+
+    @property
+    def native_unit_of_measurement_compat(self):
+        if self._state.temperature_display_mode == "fahrenheit":
+            return UnitOfTemperature.FAHRENHEIT
+        return UnitOfTemperature.CELSIUS
+
+    @property
+    def native_value(self):
+        if self._state.temperature_display_mode == self._entry.options.get("thermostat_unit", "celsius"):
+            return round(self._state.local_temperature, 1)
+        if self._state.temperature_display_mode == "fahrenheit":
+            return round(self._state.local_temperature * 9/5 + 32, 1)
+        return round((self._state.local_temperature - 32) * 5/9, 1)
+        

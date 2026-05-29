@@ -1,8 +1,9 @@
-"""Binary sensor platform for S520619 Mock."""
+"""Number platform for S520619 Mock."""
 from __future__ import annotations
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import S520619State
 from .const import DOMAIN
@@ -12,11 +13,11 @@ from .entity import S520619Entity
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     state: S520619State = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        S520619OccupancyBinarySensor(entry, state),
+        S520619LocalTemperatureNumber(entry, state),
     ])
 
 
-class _BaseBinarySensor(S520619Entity, BinarySensorEntity):
+class _BaseNumber(S520619Entity, NumberEntity):
     _attr_has_entity_name = True
 
     def __init__(self, entry, state, key):
@@ -38,18 +39,25 @@ class _BaseBinarySensor(S520619Entity, BinarySensorEntity):
         self.async_write_ha_state()
 
 
-class S520619OccupancyBinarySensor(_BaseBinarySensor):
-    _attr_name = "Occupancy"
+class S520619LocalTemperatureNumber(_BaseNumber):
+    _attr_name = "Local temperature"
+    _attr_native_min_value = -273.15
+    _attr_native_max_value = 100
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "occupancy")
+        super().__init__(entry, state, "local_temperature")
+        self._attr_native_step = 10 ** -entry.options.get("temperature_precision", 3)
+        self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get("thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
 
     @property
-    def is_on(self):
-        return self._state.occupancy
+    def native_value(self):
+        return self._state.local_temperature
+    
+    async def async_set_value(self, value: float) -> None:
+        self._state.local_temperature = value
+        self._state.update()
+        self._state.notify()
 
-    @property
-    def icon(self) -> str:
-        if self.is_on:
-            return "mdi:home"
-        return "mdi:home-off"
+
+

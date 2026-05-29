@@ -12,6 +12,7 @@ PLATFORMS = [
     Platform.SELECT,
     Platform.BINARY_SENSOR,
     Platform.SENSOR, 
+    Platform.NUMBER,
 ]
 
 
@@ -32,6 +33,13 @@ class S520619State:
     temperature_display_mode: str
 
     listeners: list = field(default_factory=list)
+
+    def update(self):
+        too_cold = self.system_mode == "heat" and self.local_temperature < self.occupied_heating_setpoint
+        too_hot = self.system_mode == "cool" and self.local_temperature > self.occupied_cooling_setpoint
+        self.running_state = "heat" if too_cold else "idle"
+        self.pi_cooling_demand = 100 if too_hot else 0
+        self.pi_heating_demand = 100 if too_cold else 0
 
     def notify(self):
         for cb in self.listeners:
