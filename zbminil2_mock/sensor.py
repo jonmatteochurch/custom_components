@@ -1,22 +1,22 @@
-"""Binary sensor platform for S520619 Mock."""
+"""Number platform for ZBMINIL2 Mock."""
 from __future__ import annotations
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from . import S520619State
+from . import ZBMINIL2State
 from .const import DOMAIN
-from .entity import S520619Entity
+from .entity import ZBMINIL2Entity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    state: S520619State = hass.data[DOMAIN][entry.entry_id]
+    state: ZBMINIL2State = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        S520619OccupancyBinarySensor(entry, state),
+        ZBMINIL2LinkqualitySensor(entry, state),
     ])
 
 
-class _BaseBinarySensor(S520619Entity, BinarySensorEntity):
+class _BaseSensor(ZBMINIL2Entity, SensorEntity):
     _attr_has_entity_name = True
 
     def __init__(self, entry, state, key):
@@ -38,18 +38,25 @@ class _BaseBinarySensor(S520619Entity, BinarySensorEntity):
         self.async_write_ha_state()
 
 
-class S520619OccupancyBinarySensor(_BaseBinarySensor):
-    _attr_name = "Occupancy"
+class ZBMINIL2LinkqualitySensor(_BaseSensor):
+    _attr_name = "Linkquality"
+    _attr_native_min_value = 0
+    _attr_native_max_value = 255
+    _attr_native_step = 1
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "occupancy")
+        super().__init__(entry, state, "linkquality")
 
     @property
-    def is_on(self):
-        return self._state.occupancy
+    def native_value(self):
+        return self._state.linkquality
 
     @property
     def icon(self) -> str:
-        if self.is_on:
-            return "mdi:home"
-        return "mdi:home-off"
+        if self.native_value < 64:
+            return "mdi:signal-cellular-outline"
+        if self.native_value < 128:
+            return "mdi:signal-cellular-1"
+        if self.native_value < 192:
+            return "mdi:signal-cellular-2"
+        return "mdi:signal-cellular-3"

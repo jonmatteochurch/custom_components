@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 24 24"
+   fill="none"
+   stroke="currentColor"
+   stroke-width="1.5"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   version="1.1"
+   id="svg16"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:export-filename="icon.png"
+   inkscape:export-xdpi="1024"
+   inkscape:export-ydpi="1024"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     id="namedview18"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="true"
+     inkscape:zoom="12.565877"
+     inkscape:cx="-20.810326"
+     inkscape:cy="7.9182695"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1512"
+       originx="0"
+       originy="0"
+       spacingy="1"
+       spacingx="1"
+       units="px" />
+  </sodipodi:namedview>
+  <!-- Thermostat body -->
+  <rect
+     x="2.51191"
+     y="2.51191"
+     width="18.976181"
+     height="18.976177"
+     rx="9.4880905"
+     ry="9.4880886"
+     fill="#e8f4f8"
+     stroke="#1976d2"
+     stroke-width="1.4653"
+     id="rect2"
+     style="stroke-width:1.02382;stroke-dasharray:none" />
+  <!-- Display screen -->
+  <!-- Temperature reading -->
+  <!-- SE logo hint: two horizontal bars -->
+  <!-- Up/down arrows -->
+  <rect
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#1976d2;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     id="rect2088"
+     width="23"
+     height="23"
+     x="0.5"
+     y="0.5"
+     ry="2" />
+</svg>

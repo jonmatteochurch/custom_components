@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZBMINIR2 Mock — Setup",
+        "description": "Setup this ZBMINIR2 mock device.",
+        "data": {
+          "name": "Device name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "A device with this name is already configured."
+    },
+    "error": {
+      "invalid_name": "Name must not be empty."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "{name} — Options",
+        "description": "Configure this ZBMINIR2 mock device.",
+        "data": {
+          "inching_control": "Inching control",
+          "inching_time": "Inching time",
+          "inching_mode": "Inching mode"
+        }
+      }
+    },
+    "error": {
+      "invalid_no_occupancy_since": "Must be a comma-separated list of integers."
+    }
+  }
+}

@@ -1,23 +1,23 @@
-"""Number platform for S520619 Mock."""
+"""Number platform for ZBMINIR2 Mock."""
 from __future__ import annotations
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from . import S520619State
+from . import ZBMINIR2State
 from .const import DOMAIN
-from .entity import S520619Entity
+from .entity import ZBMINIR2Entity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    state: S520619State = hass.data[DOMAIN][entry.entry_id]
+    state: ZBMINIR2State = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        S520619LocalTemperatureNumber(entry, state),
+        ZBMINIR2DelayedPowerOnNumber(entry, state),
     ])
 
 
-class _BaseNumber(S520619Entity, NumberEntity):
+class _BaseNumber(ZBMINIR2Entity, NumberEntity):
     _attr_has_entity_name = True
 
     def __init__(self, entry, state, key):
@@ -39,24 +39,21 @@ class _BaseNumber(S520619Entity, NumberEntity):
         self.async_write_ha_state()
 
 
-class S520619LocalTemperatureNumber(_BaseNumber):
-    _attr_name = "Local temperature"
-    _attr_native_min_value = -273.15
-    _attr_native_max_value = 100
-    _attr_entity_category = EntityCategory.DIAGNOSTIC
+class ZBMINIR2DelayedPowerOnNumber(_BaseNumber):
+    _attr_name = "Delayed power on time"
+    _attr_native_min_value = 0.5
+    _attr_native_max_value = 3599.5
+    _attr_native_step = .5
+    _attr_icon = "mdi:camera-timer"
+    _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "local_temperature")
-        self._attr_native_step = 10 ** - \
-            entry.options.get("temperature_precision", 3)
-        self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get(
-            "thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
+        super().__init__(entry, state, "delayed_power_on_time")
 
     @property
     def native_value(self):
-        return self._state.local_temperature
+        return self._state.delayed_power_on_time
 
     async def async_set_native_value(self, value: float) -> None:
-        self._state.local_temperature = value
-        self._state.update()
+        self._state.delayed_power_on_time = value
         self._state.notify()

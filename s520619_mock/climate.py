@@ -58,7 +58,7 @@ class S520619Climate(S520619Entity, ClimateEntity):
     def __init__(self, entry: ConfigEntry, state: S520619State) -> None:
         self._entry = entry
         self._state = state
-        self._attr_name = self._entry.title
+        self._attr_name = entry.title
         self._attr_unique_id = entry.entry_id
 
     async def async_added_to_hass(self) -> None:

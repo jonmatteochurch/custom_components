@@ -1,4 +1,4 @@
-"""Select platform for S520619 Mock."""
+"""Select platform for ZBMINIR2 Mock."""
 from __future__ import annotations
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -6,20 +6,20 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import S520619State
-from .const import DOMAIN, SCHNEIDER_PILOT_MODES, TEMPERATURE_DISPLAY_MODES
-from .entity import S520619Entity
+from . import ZBMINIR2State
+from .const import DOMAIN, EXTERNAL_TRIGGER_MODES, POWER_ON_BEHAVIORS
+from .entity import ZBMINIR2Entity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    state: S520619State = hass.data[DOMAIN][entry.entry_id]
+    state: ZBMINIR2State = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        S520619TemperatureDisplayModeSelect(entry, state),
-        S520619SchneiderPilotModeSelect(entry, state),
+        ZBMINIR2ExternalTriggerModeSelect(entry, state),
+        ZBMINIR2PowerOnBehaviorSelect(entry, state),
     ])
 
 
-class _BaseSelect(S520619Entity, SelectEntity):
+class _BaseSelect(ZBMINIR2Entity, SelectEntity):
     _attr_has_entity_name = True
 
     def __init__(self, entry, state, key):
@@ -41,41 +41,36 @@ class _BaseSelect(S520619Entity, SelectEntity):
         self.async_write_ha_state()
 
 
-class S520619TemperatureDisplayModeSelect(_BaseSelect):
-    _attr_name = "Temperature display mode"
-    _attr_options = TEMPERATURE_DISPLAY_MODES
+class ZBMINIR2ExternalTriggerModeSelect(_BaseSelect):
+    _attr_name = "External trigger mode"
+    _attr_options = EXTERNAL_TRIGGER_MODES
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "display_mode")
+        super().__init__(entry, state, "external_trigger_mode")
 
     @property
     def current_option(self):
-        return self._state.temperature_display_mode
+        return self._state.external_trigger_mode
 
-    @property
-    def icon(self) -> str:
-        if self.current_option == "fahrenheit":
-            return "mdi:temperature-fahrenheit"
-        return "mdi:temperature-celsius"
 
     async def async_select_option(self, option: str) -> None:
-        self._state.temperature_display_mode = option
+        self._state.external_trigger_mode = option
         self._state.notify()
 
 
-class S520619SchneiderPilotModeSelect(_BaseSelect):
-    _attr_name = "Schneider pilot mode"
-    _attr_options = SCHNEIDER_PILOT_MODES
+class ZBMINIR2PowerOnBehaviorSelect(_BaseSelect):
+    _attr_name = "Power on behavior"
+    _attr_options = POWER_ON_BEHAVIORS
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "pilot_mode")
+        super().__init__(entry, state, "power_on_behavior")
 
     @property
     def current_option(self):
-        return self._state.schneider_pilot_mode
+        return self._state.power_on_behavior
 
     async def async_select_option(self, option: str) -> None:
-        self._state.schneider_pilot_mode = option
+        self._state.power_on_behavior = option
         self._state.notify()

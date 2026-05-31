@@ -6,31 +6,32 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 
+
 PLATFORMS = [
-    Platform.CLIMATE, 
-    Platform.SWITCH,
-    Platform.SELECT,
     Platform.BINARY_SENSOR,
-    Platform.SENSOR, 
+    Platform.CLIMATE,
     Platform.NUMBER,
+    Platform.SELECT,
+    Platform.SENSOR,
+    Platform.SWITCH,
 ]
 
 
 @dataclass
 class S520619State:
-    keypad_lockout: bool
-    occupancy: bool
-    linkquality: int
-    pi_heating_demand: int
-    pi_cooling_demand: int
-    local_temperature: float
-    temperature: float
-    occupied_cooling_setpoint: float
-    occupied_heating_setpoint: float
-    running_state: str
-    schneider_pilot_mode: str
-    system_mode: str
-    temperature_display_mode: str
+    keypad_lockout: bool = False
+    occupancy: bool = True
+    linkquality: int = 255
+    pi_heating_demand: int = 0
+    pi_cooling_demand: int = 0
+    local_temperature: float = 20.0
+    temperature: float = None
+    occupied_cooling_setpoint: float = 30.0
+    occupied_heating_setpoint: float = 4.0
+    running_state: str = "idle"
+    schneider_pilot_mode: str = "pilot"
+    system_mode: str = "off"
+    temperature_display_mode: str = "celsius"
 
     listeners: list = field(default_factory=list)
 
@@ -48,7 +49,7 @@ class S520619State:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = S520619State(False, True, 255, 0, 0, 20.0, None, 30.0, 4.0, "idle", "pilot", "off", "celsius")
+    hass.data[DOMAIN][entry.entry_id] = S520619State()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 

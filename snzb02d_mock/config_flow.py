@@ -1,4 +1,4 @@
-"""Config flow for S520619 Mock."""
+"""Config flow for SNZB-02D Mock."""
 from __future__ import annotations
 
 import voluptuous as vol
@@ -9,13 +9,9 @@ from homeassistant.helpers import selector
 
 from .const import (
     DOMAIN,
-    CONF_NAME,
-    CONF_MEASUREMENT_POLL_INTERVAL,
-    CONF_TEMPERATURE_CALIBRATION,
+    CONF_NAME, 
     CONF_TEMPERATURE_PRECISION,
-    CONF_THERMOSTAT_UNIT,
-    CONF_NO_OCCUPANCY_SINCE,
-    THERMOSTAT_UNITS,
+    CONF_HUMIDITY_PRECISION
 )
 
 
@@ -27,22 +23,14 @@ def _data_schema() -> vol.Schema:
 
 def _options_schema() -> vol.Schema:
     return vol.Schema({
-        vol.Optional(CONF_MEASUREMENT_POLL_INTERVAL): selector.NumberSelector(
-            selector.NumberSelectorConfig(
-                step=1, min=-1, mode=selector.NumberSelectorMode.BOX)
-        ),
-        vol.Optional(CONF_TEMPERATURE_CALIBRATION): selector.NumberSelector(
-            selector.NumberSelectorConfig(
-                step=0.1, mode=selector.NumberSelectorMode.BOX)
-        ),
         vol.Optional(CONF_TEMPERATURE_PRECISION): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 step=1, min=0, max=3, mode=selector.NumberSelectorMode.BOX)
         ),
-        vol.Optional(CONF_THERMOSTAT_UNIT): selector.SelectSelector(
-            selector.SelectSelectorConfig(options=THERMOSTAT_UNITS)
+        vol.Optional(CONF_HUMIDITY_PRECISION): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                step=1, min=0, max=3, mode=selector.NumberSelectorMode.BOX)
         ),
-        vol.Optional(CONF_NO_OCCUPANCY_SINCE): str
     })
 
 
@@ -61,24 +49,15 @@ def _parse_options(user_input: dict) -> tuple[dict, dict]:
     config = {}
     errors = {}
 
-    if CONF_MEASUREMENT_POLL_INTERVAL in user_input:
-        config[CONF_MEASUREMENT_POLL_INTERVAL] = user_input[CONF_MEASUREMENT_POLL_INTERVAL]
-    if CONF_TEMPERATURE_CALIBRATION in user_input:
-        config[CONF_TEMPERATURE_CALIBRATION] = user_input[CONF_TEMPERATURE_CALIBRATION]
     if CONF_TEMPERATURE_PRECISION in user_input:
         config[CONF_TEMPERATURE_PRECISION] = user_input[CONF_TEMPERATURE_PRECISION]
-    if CONF_THERMOSTAT_UNIT in user_input:
-        config[CONF_THERMOSTAT_UNIT] = user_input[CONF_THERMOSTAT_UNIT]
-    if CONF_NO_OCCUPANCY_SINCE in user_input:
-        try:
-            config[CONF_NO_OCCUPANCY_SINCE] = [int(x) for x in user_input[CONF_NO_OCCUPANCY_SINCE].strip().split(",") if x.strip()]
-        except ValueError:
-            errors[CONF_NO_OCCUPANCY_SINCE] = "invalid_no_occupancy_since"
+    if CONF_HUMIDITY_PRECISION in user_input:
+        config[CONF_HUMIDITY_PRECISION] = user_input[CONF_HUMIDITY_PRECISION]
 
     return config, errors
 
 
-class S520619ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class SNZB02DConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None) -> FlowResult:
@@ -95,19 +74,19 @@ class S520619ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=self.add_suggested_values_to_schema(
                 data_schema=_data_schema(), suggested_values=user_input),
-            errors=errors
+            errors=errors,
         )
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return S520619OptionsFlow(config_entry)
+        return SNZB02DOptionsFlow(config_entry)
+    
 
-
-class S520619OptionsFlow(config_entries.OptionsFlow):
+class SNZB02DOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
-        self._config_entry = config_entry
+        self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None) -> FlowResult:
         errors = {}
@@ -120,12 +99,10 @@ class S520619OptionsFlow(config_entries.OptionsFlow):
             defaults = user_input
         else:
             defaults = dict(self._config_entry.options)
-            defaults[CONF_NO_OCCUPANCY_SINCE] = ",".join(
-                str(x) for x in self._config_entry.options.get(CONF_NO_OCCUPANCY_SINCE, []))
         return self.async_show_form(
             step_id="init",
             data_schema=self.add_suggested_values_to_schema(
                 data_schema=_options_schema(), suggested_values=defaults),
-            description_placeholders={"name": self._config_entry.title},
-            errors=errors
+                description_placeholders={"name": self.config_entry.title},
+            errors=errors,
         )

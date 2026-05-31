@@ -105,8 +105,10 @@ class S520619TemperatureSensor(_BaseSensor):
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "temperature")
-        self._attr_native_unit_of_measurement = self._entry.options.get("thermostat_unit", UnitOfTemperature.CELSIUS) 
-        self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get("thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
+        self._attr_native_unit_of_measurement = self._entry.options.get(
+            "thermostat_unit", UnitOfTemperature.CELSIUS)
+        self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get(
+            "thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
 
     @property
     def native_value(self):
@@ -143,4 +145,3 @@ class S520619DisplaySensor(_BaseSensor):
         if self._state.temperature_display_mode == "fahrenheit":
             return round(self._state.local_temperature * 9/5 + 32, 1)
         return round((self._state.local_temperature - 32) * 5/9, 1)
-        

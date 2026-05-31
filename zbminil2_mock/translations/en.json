@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZBMINIL2 Mock — Setup",
+        "description": "Setup this ZBMINIL2 mock device.",
+        "data": {
+          "name": "Device name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "A device with this name is already configured."
+    },
+    "error": {
+      "invalid_name": "Name must not be empty."
+    }
+  }
+}

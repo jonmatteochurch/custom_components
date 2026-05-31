@@ -1,4 +1,4 @@
-"""Config flow for S520619 Mock."""
+"""Config flow for ZBMINIR2 Mock."""
 from __future__ import annotations
 
 import voluptuous as vol
@@ -7,15 +7,15 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
+
 from .const import (
     DOMAIN,
     CONF_NAME,
-    CONF_MEASUREMENT_POLL_INTERVAL,
-    CONF_TEMPERATURE_CALIBRATION,
-    CONF_TEMPERATURE_PRECISION,
-    CONF_THERMOSTAT_UNIT,
-    CONF_NO_OCCUPANCY_SINCE,
-    THERMOSTAT_UNITS,
+    CONF_INCHING_CONTROL,
+    CONF_INCHING_TIME,
+    CONF_INCHING_MODE,
+    INCHING_CONTROLS,
+    INCHING_MODES,
 )
 
 
@@ -27,22 +27,16 @@ def _data_schema() -> vol.Schema:
 
 def _options_schema() -> vol.Schema:
     return vol.Schema({
-        vol.Optional(CONF_MEASUREMENT_POLL_INTERVAL): selector.NumberSelector(
+        vol.Optional(CONF_INCHING_CONTROL): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_CONTROLS)
+        ),
+        vol.Optional(CONF_INCHING_TIME): selector.NumberSelector(
             selector.NumberSelectorConfig(
-                step=1, min=-1, mode=selector.NumberSelectorMode.BOX)
+                min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
         ),
-        vol.Optional(CONF_TEMPERATURE_CALIBRATION): selector.NumberSelector(
-            selector.NumberSelectorConfig(
-                step=0.1, mode=selector.NumberSelectorMode.BOX)
-        ),
-        vol.Optional(CONF_TEMPERATURE_PRECISION): selector.NumberSelector(
-            selector.NumberSelectorConfig(
-                step=1, min=0, max=3, mode=selector.NumberSelectorMode.BOX)
-        ),
-        vol.Optional(CONF_THERMOSTAT_UNIT): selector.SelectSelector(
-            selector.SelectSelectorConfig(options=THERMOSTAT_UNITS)
-        ),
-        vol.Optional(CONF_NO_OCCUPANCY_SINCE): str
+        vol.Optional(CONF_INCHING_MODE): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_MODES)
+        )
     })
 
 
@@ -61,24 +55,17 @@ def _parse_options(user_input: dict) -> tuple[dict, dict]:
     config = {}
     errors = {}
 
-    if CONF_MEASUREMENT_POLL_INTERVAL in user_input:
-        config[CONF_MEASUREMENT_POLL_INTERVAL] = user_input[CONF_MEASUREMENT_POLL_INTERVAL]
-    if CONF_TEMPERATURE_CALIBRATION in user_input:
-        config[CONF_TEMPERATURE_CALIBRATION] = user_input[CONF_TEMPERATURE_CALIBRATION]
-    if CONF_TEMPERATURE_PRECISION in user_input:
-        config[CONF_TEMPERATURE_PRECISION] = user_input[CONF_TEMPERATURE_PRECISION]
-    if CONF_THERMOSTAT_UNIT in user_input:
-        config[CONF_THERMOSTAT_UNIT] = user_input[CONF_THERMOSTAT_UNIT]
-    if CONF_NO_OCCUPANCY_SINCE in user_input:
-        try:
-            config[CONF_NO_OCCUPANCY_SINCE] = [int(x) for x in user_input[CONF_NO_OCCUPANCY_SINCE].strip().split(",") if x.strip()]
-        except ValueError:
-            errors[CONF_NO_OCCUPANCY_SINCE] = "invalid_no_occupancy_since"
+    if CONF_INCHING_CONTROL in user_input:
+        config[CONF_INCHING_CONTROL] = user_input[CONF_INCHING_CONTROL]
+    if CONF_INCHING_TIME in user_input:
+        config[CONF_INCHING_TIME] = user_input[CONF_INCHING_TIME]
+    if CONF_INCHING_MODE in user_input:
+        config[CONF_INCHING_MODE] = user_input.get(CONF_INCHING_MODE)
 
     return config, errors
 
 
-class S520619ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ZBMINIR2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None) -> FlowResult:
@@ -95,16 +82,16 @@ class S520619ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=self.add_suggested_values_to_schema(
                 data_schema=_data_schema(), suggested_values=user_input),
-            errors=errors
+            errors=errors,
         )
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return S520619OptionsFlow(config_entry)
+        return ZBMINIR2OptionsFlow(config_entry)
+    
 
-
-class S520619OptionsFlow(config_entries.OptionsFlow):
+class ZBMINIR2OptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
         self._config_entry = config_entry
@@ -120,8 +107,6 @@ class S520619OptionsFlow(config_entries.OptionsFlow):
             defaults = user_input
         else:
             defaults = dict(self._config_entry.options)
-            defaults[CONF_NO_OCCUPANCY_SINCE] = ",".join(
-                str(x) for x in self._config_entry.options.get(CONF_NO_OCCUPANCY_SINCE, []))
         return self.async_show_form(
             step_id="init",
             data_schema=self.add_suggested_values_to_schema(
