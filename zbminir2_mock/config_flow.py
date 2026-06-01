@@ -52,15 +52,8 @@ def _parse_data(user_input: dict) -> tuple[dict, dict]:
 
 
 def _parse_options(user_input: dict) -> tuple[dict, dict]:
-    config = {}
+    config = user_input.copy()
     errors = {}
-
-    if CONF_INCHING_CONTROL in user_input:
-        config[CONF_INCHING_CONTROL] = user_input[CONF_INCHING_CONTROL]
-    if CONF_INCHING_TIME in user_input:
-        config[CONF_INCHING_TIME] = user_input[CONF_INCHING_TIME]
-    if CONF_INCHING_MODE in user_input:
-        config[CONF_INCHING_MODE] = user_input.get(CONF_INCHING_MODE)
 
     return config, errors
 

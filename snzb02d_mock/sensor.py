@@ -70,7 +70,45 @@ class SNZB02DLinkqualitySensor(_BaseSensor):
 
 class SNZB02DTemperatureSensor(_BaseSensor):
     _attr_name = "Temperature"
+    _attr_icon = "mdi:thermometer"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+
+    def __init__(self, entry, state):
+        super().__init__(entry, state, "temperature")
+
+    def _temperature(self):
+        return self._state.temperature + self._state.temperature_calibration
+
+    @property
+    def native_value(self):
+        return self._temperature()
+    
+
+class SNZB02DHumiditySensor(_BaseSensor):
+    _attr_name = "Humidity"
+    _attr_native_unit_of_measurement = PERCENTAGE
+
+    def __init__(self, entry, state):
+        super().__init__(entry, state, "humidity")
+
+    def _humidity(self):
+        return self._state.humidity + self._state.humidity_calibration
+
+    @property
+    def native_value(self):
+        return self._humidity()
+
+    @property
+    def icon(self) -> str:
+        if self._humidity() < self._state.comfort_humidity_min:
+            return "mdi:weather-sunny"
+        if self._humidity() > self._state.comfort_humidity_max:
+            return "mdi:water-outline"
+        return "mdi:blank"
+    
+
+class SNZB02DisplaySensor(_BaseSensor):
+    _attr_name = "Display"
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "temperature")
@@ -96,29 +134,6 @@ class SNZB02DTemperatureSensor(_BaseSensor):
             return "mdi:snowflake"
         if self._temperature() > self._state.comfort_temperature_max:
             return "mdi:fire"
-        return "mdi:blank"
-    
-
-class SNZB02DHumiditySensor(_BaseSensor):
-    _attr_name = "Humidity"
-    _attr_native_unit_of_measurement = PERCENTAGE
-
-    def __init__(self, entry, state):
-        super().__init__(entry, state, "humidity")
-
-    def _humidity(self):
-        return self._state.humidity + self._state.humidity_calibration
-
-    @property
-    def native_value(self):
-        return self._humidity()
-
-    @property
-    def icon(self) -> str:
-        if self._humidity() < self._state.comfort_humidity_min:
-            return "mdi:weather-sunny"
-        if self._humidity() > self._state.comfort_humidity_max:
-            return "mdi:water-outline"
         return "mdi:blank"
     
 

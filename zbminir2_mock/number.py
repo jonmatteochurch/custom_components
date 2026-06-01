@@ -13,7 +13,7 @@ from .entity import ZBMINIR2Entity
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     state: ZBMINIR2State = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        ZBMINIR2DelayedPowerOnNumber(entry, state),
+        ZBMINIR2DelayedPowerOnTimeNumber(entry, state),
     ])
 
 
@@ -39,7 +39,7 @@ class _BaseNumber(ZBMINIR2Entity, NumberEntity):
         self.async_write_ha_state()
 
 
-class ZBMINIR2DelayedPowerOnNumber(_BaseNumber):
+class ZBMINIR2DelayedPowerOnTimeNumber(_BaseNumber):
     _attr_name = "Delayed power on time"
     _attr_native_min_value = 0.5
     _attr_native_max_value = 3599.5

@@ -27,9 +27,6 @@
           "inching_mode": "Inching mode"
         }
       }
-    },
-    "error": {
-      "invalid_no_occupancy_since": "Must be a comma-separated list of integers."
     }
   }
 }

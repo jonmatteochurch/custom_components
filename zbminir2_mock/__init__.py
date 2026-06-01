@@ -1,4 +1,4 @@
-"""SONOFF ZBMINIR2 Mock Switch."""
+"""ZBMINIR2 Mock Switch."""
 from __future__ import annotations
 from dataclasses import dataclass, field
 from homeassistant.config_entries import ConfigEntry

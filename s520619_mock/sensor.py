@@ -102,6 +102,7 @@ class S520619PIHeatingDemandSensor(_BaseSensor):
 
 class S520619TemperatureSensor(_BaseSensor):
     _attr_name = "Temperature"
+    _attr_icon = "mdi:thermometer"
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "temperature")
@@ -140,8 +141,6 @@ class S520619DisplaySensor(_BaseSensor):
 
     @property
     def native_value(self):
-        if self._state.temperature_display_mode == self._entry.options.get("thermostat_unit", "celsius"):
-            return round(self._state.local_temperature, 1)
         if self._state.temperature_display_mode == "fahrenheit":
-            return round(self._state.local_temperature * 9/5 + 32, 1)
-        return round((self._state.local_temperature - 32) * 5/9, 1)
+            return round(self._state.local_temperature * 18/5 + 64) / 2
+        return round(self._state.local_temperature * 2) / 2
