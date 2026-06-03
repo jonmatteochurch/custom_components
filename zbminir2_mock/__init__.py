@@ -1,5 +1,6 @@
 """ZBMINIR2 Mock Switch."""
 from __future__ import annotations
+from asyncio import Task
 from dataclasses import dataclass, field
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
