@@ -1,4 +1,4 @@
-"""Number platform for ZBMINIL2 Mock."""
+"""Sensor platform for ZBMINIL2 Mock."""
 from __future__ import annotations
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry

@@ -41,14 +41,12 @@ class _BaseNumber(S520619Entity, NumberEntity):
 
 class S520619LocalTemperatureNumber(_BaseNumber):
     _attr_name = "Local temperature"
-    _attr_native_min_value = -273.15
+    _attr_native_min_value = -20
     _attr_native_max_value = 100
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, entry, state):
         super().__init__(entry, state, "local_temperature")
-        self._attr_native_step = 10 ** - \
-            entry.options.get("temperature_precision", 3)
         self._attr_icon = "mdi:temperature-fahrenheit" if entry.options.get(
             "thermostat_unit") == "fahrenheit" else "mdi:temperature-celsius"
 
@@ -56,6 +54,10 @@ class S520619LocalTemperatureNumber(_BaseNumber):
     def native_value(self):
         return self._state.local_temperature
 
+    @property
+    def native_step(self) -> float:
+        return 10 ** -self._entry.options.get("temperature_precision", 3)
+    
     async def async_set_native_value(self, value: float) -> None:
         self._state.local_temperature = value
         self._state.update()

@@ -1,0 +1,12 @@
+{
+  "domain": "minizb2gs_mock",
+  "name": "MINI-ZB2GS (Mock Double Switch)",
+  "version": "1.0.0",
+  "documentation": "https://www.zigbee2mqtt.io/devices/MINI-ZB2GS.html",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "local_push",
+  "config_flow": true
+}
+  

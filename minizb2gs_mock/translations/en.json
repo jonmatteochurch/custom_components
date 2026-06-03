@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZBMINIR2 Mock — Setup",
+        "description": "Setup this ZBMINIR2 mock device.",
+        "data": {
+          "name": "Device name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "A device with this name is already configured."
+    },
+    "error": {
+      "invalid_name": "Name must not be empty."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "": "{name} — Options",
+        "description": "Configure this MINIZB2GS mock device.",
+        "data": {
+          "inching_control_set_l1": "Inching control set L1",
+          "inching_control_set_l2": "Inching control set L2",
+          "inching_control_l1": "Inching control",
+          "inching_time_l1": "Inching time",
+          "inching_mode_l1": "Inching mode",
+          "inching_control_l2": "Inching control",
+          "inching_time_l2": "Inching time",
+          "inching_mode_l2": "Inching mode"
+        }
+      }
+    }
+  }
+}

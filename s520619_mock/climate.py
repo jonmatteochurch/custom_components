@@ -76,7 +76,7 @@ class S520619Climate(S520619Entity, ClimateEntity):
 
     @property
     def precision(self) -> float:
-        return self._entry.options.get(CONF_TEMPERATURE_PRECISION, 3)
+        return 10**-self._entry.options.get(CONF_TEMPERATURE_PRECISION, 3)
 
     @property
     def temperature_unit(self) -> str:

@@ -1,4 +1,4 @@
-"""Number platform for S520619 Mock."""
+"""Sensor platform for S520619 Mock."""
 from __future__ import annotations
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
