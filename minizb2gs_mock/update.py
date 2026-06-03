@@ -24,5 +24,5 @@ class MINIZB2GSUpdate(MINIZB2GSEntity, UpdateEntity):
     def __init__(self, entry, state) -> None:
         self._entry = entry
         self._state = state
-        self._attr_name = .options.get(CONF_NAME)
-        self._attr_unique_id = entry.options.get(CONF_NAME)
+        self._attr_name = entry.title
+        self._attr_unique_id = entry.entry_id

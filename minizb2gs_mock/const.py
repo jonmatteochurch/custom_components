@@ -1,9 +1,9 @@
 """Constants for MINI-ZB2GS Mock."""
-DOMAIN = "minizb2gs\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_mock"
+DOMAIN = "minizb2gs_mock"
 
 CONF_NAME = "name"
-CONF_INCHING_CONTROL_SET_L1 = "inching_control_l1"
-CONF_INCHING_CONTROL_SET_L2 = "inching_control_l2"
+CONF_INCHING_CONTROL_SET_L1 = "inching_control_set_l1"
+CONF_INCHING_CONTROL_SET_L2 = "inching_control_set_l2"
 CONF_INCHING_CONTROL_L1 = "inching_control_l1"
 CONF_INCHING_CONTROL_L2 = "inching_control_l2"
 CONF_INCHING_TIME_L1 = "inching_time_l1"

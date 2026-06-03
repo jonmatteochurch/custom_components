@@ -46,7 +46,7 @@ class _BaseSwitch(MINIZB2GSEntity, SwitchEntity):
         self.async_write_ha_state()
 
 
-class MINIZB2GSL1Switch(MINIZB2GSEntity, SwitchEntity):
+class MINIZB2GSL1Switch(_BaseSwitch):
     _attr_name = "L1"
 
     def __init__(self, entry, state) -> None:
@@ -97,11 +97,11 @@ class MINIZB2GSDelayedPowerOnStateChannel1L1Switch(_BaseSwitch):
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "delayed_power_on_state_channel1_l1")
+        super().__init__(entry, state, "delayed_power_on_state_channel_1_l1")
 
     @property
     def is_on(self):
-        return self._state.delayed_power_on_state_channel1_l1
+        return self._state.delayed_power_on_state_channel_1_l1
 
     @property
     def icon(self) -> str:
@@ -110,11 +110,11 @@ class MINIZB2GSDelayedPowerOnStateChannel1L1Switch(_BaseSwitch):
         return "mdi:timer-sand-empty"
 
     async def async_turn_on(self):
-        self._state.delayed_power_on_state_channel1_l1 = True
+        self._state.delayed_power_on_state_channel_1_l1 = True
         self._state.notify()
 
     async def async_turn_off(self):
-        self._state.delayed_power_on_state_channel1_l1 = False
+        self._state.delayed_power_on_state_channel_1_l1 = False
         self._state.notify()
 
 
@@ -123,7 +123,7 @@ class MINIZB2GSDelayedPowerOnStateChannel2L2Switch(_BaseSwitch):
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state):
-        super().__init__(entry, state, "delayed_power_on_state_channel2_l2")
+        super().__init__(entry, state, "delayed_power_on_state_channel_2_l2")
 
     @property
     def is_on(self):

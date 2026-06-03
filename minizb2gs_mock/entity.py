@@ -6,7 +6,7 @@ class MINIZB2GSEntity:
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self._entry.entry_id)},
-            name=self._entry.options.get(CONF_NAME),
+            name=self._entry.title,
             model="Sonoff MINI-ZB2GS (Mock Double Switch)",
             manufacturer="Jon Matteo Church"
         )

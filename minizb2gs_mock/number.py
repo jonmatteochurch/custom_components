@@ -5,13 +5,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from . import MINIZB2GState
+from . import MINIZB2GSState
 from .const import DOMAIN, CONF_NAME
 from .entity import MINIZB2GSEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    state: MINIZB2GState = hass.data[DOMAIN][entry.entry_id]
+    state: MINIZB2GSState = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
         MINIZB2GSDelayedPowerOnTimeL1Number(entry, state),
         MINIZB2GSDelayedPowerOnTimeL2Number(entry, state),

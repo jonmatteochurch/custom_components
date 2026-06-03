@@ -86,7 +86,7 @@ class SNZB02DConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class SNZB02DOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(self, user_input=None) -> FlowResult:
         errors = {}
@@ -103,6 +103,6 @@ class SNZB02DOptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=self.add_suggested_values_to_schema(
                 data_schema=_options_schema(), suggested_values=defaults),
-                description_placeholders={"name": self.config_entry.title},
+                description_placeholders={"name": self._config_entry.title},
             errors=errors,
         )
