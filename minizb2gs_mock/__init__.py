@@ -1,6 +1,6 @@
 """MINI-ZB2GS Mock Double Switch."""
 from __future__ import annotations
-from asyncio import Task
+from asyncio import TimerHandle
 from dataclasses import dataclass, field
 
 from homeassistant.config_entries import ConfigEntry
@@ -47,16 +47,14 @@ class MINIZB2GSState:
         for cb in self.listeners:
             cb()
 
-    pending_l1: list[Task] = field(default_factory=list)
-    pending_l2: list[Task] = field(default_factory=list)
+    pending_l1: list[TimerHandle] = field(default_factory=list)
+    pending_l2: list[TimerHandle] = field(default_factory=list)
 
     def cancel_pending(self, channel: str) -> None:
         attr = f"pending_{channel}"
-        tasks = getattr(self, attr)
-        for task in tasks:
-            if task and not task.done():
-                task.cancel()
-        setattr(self, attr, list())
+        for handle in getattr(self, attr):
+          handle.cancel()
+        setattr(self, attr, [])
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

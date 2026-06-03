@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import MINIZB2GSState
-from .const import DOMAIN, CONF_NAME, CONF_INCHING_CONTROL_L1, CONF_INCHING_MODE_L1, CONF_INCHING_TIME_L1
+from .const import DOMAIN, CONF_NAME, CONF_INCHING_CONTROL_L1, CONF_INCHING_MODE_L1, CONF_INCHING_TIME_L1, CONF_INCHING_CONTROL_L2, CONF_INCHING_MODE_L2, CONF_INCHING_TIME_L2, STATE_DETACH_RELAY_OUTLET1, STATE_DETACH_RELAY_OUTLET2
 from .entity import MINIZB2GSEntity
 
 
@@ -63,21 +63,21 @@ class MINIZB2GSL1Switch(_BaseSwitch):
 
     async def async_turn_on(self) -> None:
         self._state.cancel_pending("l1")
-        delay = self.delayed_power_on_time_l1 if self._state.delayed_power_on_state_channel_1_l1 else 0
+        delay = self._state.delayed_power_on_time_l1 if self._state.delayed_power_on_state_channel_1_l1 else 0
         inching = self._entry.options.get(CONF_INCHING_TIME_L1, 0) if self._entry.options.get(CONF_INCHING_CONTROL_L1, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE_L1, "") == "OFF" else 0
         if delay and inching:
-            self._state.pending_l1 = (
+            self._state.pending_l1 = [
                 get_event_loop().call_later(delay, self.turn_on),
-                get_event_loop().call_later(delay+inching, self._turn_off)
-            )
+                get_event_loop().call_later(delay+inching, self.turn_off)
+            ]
         elif delay:
-            self._state.pending_l1 = (
+            self._state.pending_l1 = [
                 get_event_loop().call_later(delay, self.turn_on)
-            )
+            ]
         elif inching:
-            self._state.pending_l1 = (
-                get_event_loop().call_later(inching, self._turn_off)
-            )
+            self._state.pending_l1 = [
+                get_event_loop().call_later(inching, self.turn_off)
+            ]
             self.turn_on()
         else:
             self.turn_on()
@@ -90,9 +90,9 @@ class MINIZB2GSL1Switch(_BaseSwitch):
         self._state.cancel_pending("l1")
         inching = self._entry.options.get(CONF_INCHING_TIME_L1, 0) if self._entry.options.get(CONF_INCHING_CONTROL_L1, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE_L1, "") == "ON" else 0
         if inching:
-            self._state.pending_l1 = (
+            self._state.pending_l1 = [
                 get_event_loop().call_later(inching, self.turn_on)
-            )
+            ]
         self.turn_off()
 
     async def async_toggle(self) -> None:
@@ -100,6 +100,10 @@ class MINIZB2GSL1Switch(_BaseSwitch):
             await self.async_turn_off()
         else:
             await self.async_turn_on()
+
+    async def async_will_remove_from_hass(self):
+        self._state.cancel_pending("l1")
+        return await super().async_will_remove_from_hass()
 
 
 class MINIZB2GSL2Switch(_BaseSwitch):
@@ -112,34 +116,42 @@ class MINIZB2GSL2Switch(_BaseSwitch):
     def is_on(self):
         return self._state.state_l2 == "ON"
 
+    def turn_on(self):
+        self._state.state_l2 = "ON"
+        self._state.notify()
+
     async def async_turn_on(self):
         self._state.cancel_pending("l2")
-        delay = self.delayed_power_on_time_l2 if self._state.delayed_power_on_state_channel_2_l2 else 0
-        inching = self._entry.options.get(CONF_INCHING_TIME_L2, 0) if self._entry.options.get(CONF_INCHING_CONTROL_L2, "") ==
+        delay = self._state.delayed_power_on_time_l2 if self._state.delayed_power_on_state_channel_2_l2 else 0
+        inching = self._entry.options.get(CONF_INCHING_TIME_L2, 0) if self._entry.options.get(CONF_INCHING_CONTROL_L2, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE_L2, "") == "OFF" else 0
         if delay and inching:
-            self._state.pending_l2 = (
+            self._state.pending_l2 = [
                 get_event_loop().call_later(delay, self.turn_on),
-                get_event_loop().call_later(delay+inching, self._turn_off)
-            )
+                get_event_loop().call_later(delay+inching, self.turn_off)
+            ]
         elif delay:
-            self._state.pending_l2 = (
+            self._state.pending_l2 = [
                 get_event_loop().call_later(delay, self.turn_on)
-            )
+            ]
         elif inching:
-            self._state.pending_l2 = (
-                get_event_loop().call_later(inching, self._turn_off)
-            )
+            self._state.pending_l2 = [
+                get_event_loop().call_later(inching, self.turn_off)
+            ]
             self.turn_on()
         else:
             self.turn_on()
 
+    def turn_off(self):
+        self._state.state_l2 = "OFF"
+        self._state.notify()
+    
     async def async_turn_off(self):
         self._state.cancel_pending("l2")
         inching = self._entry.options.get(CONF_INCHING_TIME_L2, 0) if self._entry.options.get(CONF_INCHING_CONTROL_L2, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE_L2, "") == "ON" else 0
         if inching:
-            self._state.pending_l2 = (
+            self._state.pending_l2 = [
                 get_event_loop().call_later(inching, self.turn_on)
-            )
+            ]
         self.turn_off()
 
     async def async_toggle(self):
@@ -147,6 +159,10 @@ class MINIZB2GSL2Switch(_BaseSwitch):
             await self.async_turn_off()
         else:
             await self.async_turn_on()
+
+    async def async_will_remove_from_hass(self):
+        self._state.cancel_pending("l2")
+        return await super().async_will_remove_from_hass()
 
 
 class MINIZB2GSDelayedPowerOnStateChannel1L1Switch(_BaseSwitch):
@@ -211,15 +227,14 @@ class MINIZB2GSDetachRelayModeL1Switch(_BaseSwitch):
 
     @property
     def is_on(self):
-        return self._state.detach_relay_mode_l1
+        return self._state.detach_relay_mode.get(STATE_DETACH_RELAY_OUTLET1)
 
     async def async_turn_on(self):
-        self._state.detach_relay_mode_l1 = True
+        self._state.detach_relay_mode[STATE_DETACH_RELAY_OUTLET1] = True
         self._state.notify()
 
     async def async_turn_off(self):
-        self._state.cancel_pending("l1")
-        self._state.detach_relay_mode_l1 = False
+        self._state.detach_relay_mode[STATE_DETACH_RELAY_OUTLET1] = False
         self._state.notify()
 
 
@@ -233,14 +248,14 @@ class MINIZB2GSDetachRelayModeL2Switch(_BaseSwitch):
 
     @property
     def is_on(self):
-        return self._state.detach_relay_mode_l2
+        return self._state.detach_relay_mode.get(STATE_DETACH_RELAY_OUTLET2)
 
     async def async_turn_on(self):
-        self._state.detach_relay_mode_l2 = True
+        self._state.detach_relay_mode[STATE_DETACH_RELAY_OUTLET2] = True
         self._state.notify()
 
     async def async_turn_off(self):
-        self._state.detach_relay_mode_l2 = False
+        self._state.detach_relay_mode[STATE_DETACH_RELAY_OUTLET2] = False
         self._state.notify()
 
 

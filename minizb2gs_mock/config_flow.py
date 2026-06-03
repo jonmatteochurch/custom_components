@@ -11,8 +11,6 @@ from homeassistant.helpers import selector
 from .const import (
     DOMAIN,
     CONF_NAME,
-    CONF_INCHING_CONTROL_SET_L1,
-    CONF_INCHING_CONTROL_SET_L2,
     CONF_INCHING_CONTROL_L1,
     CONF_INCHING_CONTROL_L2,
     CONF_INCHING_TIME_L1,
@@ -32,30 +30,26 @@ def _data_schema() -> vol.Schema:
 
 def _options_schema() -> vol.Schema:
     return vol.Schema({
-        vol.Optional(CONF_INCHING_CONTROL_SET_L1): {
-            vol.Optional(CONF_INCHING_CONTROL_L1): selector.SelectSelector(
-                selector.SelectSelectorConfig(options=INCHING_CONTROLS)
-            ),
-            vol.Optional(CONF_INCHING_TIME_L1): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
-            ),
-            vol.Optional(CONF_INCHING_MODE_L1): selector.SelectSelector(
-                selector.SelectSelectorConfig(options=INCHING_MODES)
-            ),
-        },
-        vol.Optional(CONF_INCHING_CONTROL_SET_L2): {
-            vol.Optional(CONF_INCHING_CONTROL_L2): selector.SelectSelector(
-                selector.SelectSelectorConfig(options=INCHING_CONTROLS)
-            ),
-            vol.Optional(CONF_INCHING_TIME_L2): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
-            ),
-            vol.Optional(CONF_INCHING_MODE_L2): selector.SelectSelector(
-                selector.SelectSelectorConfig(options=INCHING_MODES)
-            ),
-        }
+        vol.Optional(CONF_INCHING_CONTROL_L1): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_CONTROLS)
+        ),
+        vol.Optional(CONF_INCHING_TIME_L1): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
+        ),
+        vol.Optional(CONF_INCHING_MODE_L1): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_MODES)
+        ),
+        vol.Optional(CONF_INCHING_CONTROL_L2): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_CONTROLS)
+        ),
+        vol.Optional(CONF_INCHING_TIME_L2): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
+        ),
+        vol.Optional(CONF_INCHING_MODE_L2): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=INCHING_MODES)
+        ),
     })
 
 
