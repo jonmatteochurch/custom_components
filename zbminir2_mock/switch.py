@@ -1,12 +1,13 @@
 """Switch platform for ZBMINIR2 Mock."""
 from __future__ import annotations
+from asyncio import get_event_loop
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import ZBMINIR2State
-from .const import DOMAIN
+from .const import DOMAIN, CONF_INCHING_CONTROL, CONF_INCHING_MODE, CONF_INCHING_TIME
 from .entity import ZBMINIR2Entity
 
 
@@ -47,9 +48,30 @@ class ZBMINIR2Switch(ZBMINIR2Entity, SwitchEntity):
     def is_on(self) -> bool:
         return self._state.state == "ON"
 
-    async def async_turn_on(self) -> None:
+    def turn_on(self):
         self._state.state = "ON"
         self._state.notify()
+
+    async def async_turn_on(self) -> None:
+        self._state.cancel_pending()
+        delay = self._state.delayed_power_on_time if self._state.delayed_power_on_state else 0
+        inching = self._entry.options.get(CONF_INCHING_TIME, 0) if self._entry.options.get(CONF_INCHING_CONTROL, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE, "") == "OFF" else 0
+        if delay and inching:
+            self._state.pending = [
+                get_event_loop().call_later(delay, self.turn_on),
+                get_event_loop().call_later(delay+inching, self.turn_off)
+            ]
+        elif delay:
+            self._state.pending = [
+                get_event_loop().call_later(delay, self.turn_on)
+            ]
+        elif inching:
+            self._state.pending = [
+                get_event_loop().call_later(inching, self.turn_off)
+            ]
+            self.turn_on()
+        else:
+            self.turn_on()
 
     async def async_turn_off(self) -> None:
         self._state.state = "OFF"
@@ -103,9 +125,24 @@ class ZBMINIR2DelayedPowerOnStateSwitch(_BaseSwitch):
         self._state.delayed_power_on_state = True
         self._state.notify()
 
-    async def async_turn_off(self):
-        self._state.delayed_power_on_state = False
+    def turn_off(self) -> None:
+        self._state.state = "OFF"
         self._state.notify()
+
+    async def async_turn_off(self) -> None:
+        self._state.cancel_pending()
+        inching = self._entry.options.get(CONF_INCHING_TIME, 0) if self._entry.options.get(CONF_INCHING_CONTROL, "") == "ENABLE" and self._entry.options.get(CONF_INCHING_MODE, "") == "ON" else 0
+        if inching:
+            self._state.pending = [
+                get_event_loop().call_later(inching, self.turn_on)
+            ]
+        self.turn_off()
+
+    async def async_toggle(self) -> None:
+        if self._state.state == "ON":
+            await self.async_turn_off()
+        else:
+            await self.async_turn_on()
 
 
 class ZBMINIR2DetachRelayModeSwitch(_BaseSwitch):

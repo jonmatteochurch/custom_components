@@ -1,6 +1,6 @@
 """ZBMINIR2 Mock Switch."""
 from __future__ import annotations
-from asyncio import Task
+from asyncio import TimerHandle
 from dataclasses import dataclass, field
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -35,6 +35,13 @@ class ZBMINIR2State:
     def notify(self) -> None:
         for cb in self.listeners:
             cb()
+
+    pending: list[TimerHandle] = field(default_factory=list)
+
+    def cancel_pending(self) -> None:
+        for handle in self.pending:
+          handle.cancel()
+        self.pending = []
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
