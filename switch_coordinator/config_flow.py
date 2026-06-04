@@ -1,4 +1,4 @@
-"""Config flow for ZBMINIR2 Mock."""
+"""Config flow for Switch Coordinator."""
 from __future__ import annotations
 
 import voluptuous as vol
@@ -10,11 +10,8 @@ from homeassistant.helpers import selector
 from .const import (
     DOMAIN,
     CONF_NAME,
-    CONF_INCHING_CONTROL,
-    CONF_INCHING_TIME,
-    CONF_INCHING_MODE,
-    INCHING_CONTROLS,
-    INCHING_MODES,
+    CONF_MASTER_SWITCHES,
+    CONF_SLAVE_SWITCHES
 )
 
 
@@ -26,38 +23,38 @@ def _data_schema() -> vol.Schema:
 
 def _options_schema() -> vol.Schema:
     return vol.Schema({
-        vol.Optional(CONF_INCHING_CONTROL): selector.SelectSelector(
-            selector.SelectSelectorConfig(options=INCHING_CONTROLS)
+        vol.Required(CONF_MASTER_SWITCHES): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain="switch", multiple=True)
         ),
-        vol.Optional(CONF_INCHING_TIME): selector.NumberSelector(
-            selector.NumberSelectorConfig(
-                min=0.5, max=3599.5, step=0.5, mode=selector.NumberSelectorMode.BOX)
-        ),
-        vol.Optional(CONF_INCHING_MODE): selector.SelectSelector(
-            selector.SelectSelectorConfig(options=INCHING_MODES)
-        )
-    })
+        vol.Required(CONF_SLAVE_SWITCHES): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain="switch", multiple=True)
+        )},
+    )
 
 
-def _parse_data(user_input: dict) -> tuple[dict, dict]:
+def _parse_data(user_input: dict) -> dict:
     config = {}
     errors = {}
 
     config[CONF_NAME] = user_input.get(CONF_NAME, "").strip()
+
     if not config[CONF_NAME]:
         errors[CONF_NAME] = "invalid_name"
 
     return config, errors
 
 
-def _parse_options(user_input: dict) -> tuple[dict, dict]:
+def _parse_options(user_input: dict) -> dict:
     config = user_input.copy()
     errors = {}
+
+    if any(master in config[CONF_SLAVE_SWITCHES] for master in config[CONF_MASTER_SWITCHES]):
+        errors[CONF_SLAVE_SWITCHES] = "master_in_slaves"
 
     return config, errors
 
 
-class ZBMINIR2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class SwitchCoordinatorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None) -> FlowResult:
@@ -74,16 +71,16 @@ class ZBMINIR2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=self.add_suggested_values_to_schema(
                 data_schema=_data_schema(), suggested_values=user_input),
-            errors=errors,
+            errors=errors
         )
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return ZBMINIR2OptionsFlow(config_entry)
-    
+        return SwitchCoordinatorOptionsFlow(config_entry)
 
-class ZBMINIR2OptionsFlow(config_entries.OptionsFlow):
+
+class SwitchCoordinatorOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
         self._config_entry = config_entry

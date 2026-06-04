@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import MINIZB2GSState
-from .const import CONF_NAME, DOMAIN
+from .const import  DOMAIN
 from .entity import MINIZB2GSEntity
 
 
@@ -19,10 +19,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class MINIZB2GSUpdate(MINIZB2GSEntity, UpdateEntity):
     _attr_has_entity_name = True
+    _attr_name = None
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state) -> None:
         self._entry = entry
         self._state = state
-        self._attr_name = entry.title
         self._attr_unique_id = entry.entry_id

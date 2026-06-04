@@ -45,6 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class S520619Climate(S520619Entity, ClimateEntity):
     _attr_has_entity_name = True
+    _attr_name = None
     _attr_target_temperature_step = 0.5
     _attr_min_temp = 4.0
     _attr_max_temp = 30.0
@@ -58,7 +59,6 @@ class S520619Climate(S520619Entity, ClimateEntity):
     def __init__(self, entry: ConfigEntry, state: S520619State) -> None:
         self._entry = entry
         self._state = state
-        self._attr_name = entry.title
         self._attr_unique_id = entry.entry_id
 
     async def async_added_to_hass(self) -> None:

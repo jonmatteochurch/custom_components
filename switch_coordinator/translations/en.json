@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Switch Coordinator — Setup",
+        "description": "Setup this Switch Coordinator device.",
+        "data": {
+          "name": "Device name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "A device with this name is already configured."
+    },
+    "error": {
+      "invalid_name": "Name must not be empty."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "{name} — Options",
+        "description": "Configure this Switch Coordinator device.",
+        "data": {
+          "master_switch_entities": "Master switches",
+          "slave_switch_entities": "Slave switches"
+        }
+      }
+    },
+    "error": {
+      "master_in_slaves": "A switch cannot be both master and slave."      
+    }
+  }
+}

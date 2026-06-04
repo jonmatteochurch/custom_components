@@ -19,10 +19,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class ZBMINIR2Update(ZBMINIR2Entity, UpdateEntity):
     _attr_has_entity_name = True
+    _attr_name = None
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, entry, state) -> None:
         self._entry = entry
         self._state = state
-        self._attr_name = entry.title
         self._attr_unique_id = entry.entry_id

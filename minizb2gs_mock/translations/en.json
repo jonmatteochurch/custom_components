@@ -22,12 +22,12 @@
         "": "{name} — Options",
         "description": "Configure this MINIZB2GS mock device.",
         "data": {
-          "inching_control_l1": "Inching control",
-          "inching_time_l1": "Inching time",
-          "inching_mode_l1": "Inching mode",
-          "inching_control_l2": "Inching control",
-          "inching_time_l2": "Inching time",
-          "inching_mode_l2": "Inching mode"
+          "inching_control_l1": "Inching control l1",
+          "inching_time_l1": "Inching time l1",
+          "inching_mode_l1": "Inching mode l1",
+          "inching_control_l2": "Inching control l2",
+          "inching_time_l2": "Inching time l2",
+          "inching_mode_l2": "Inching mode l2"
         }
       }
     }
